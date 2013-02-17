@@ -32,7 +32,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
       setFocusable(true);
       setFocusTraversalKeysEnabled(false);
       setPreferredSize (new Dimension(width, height));
-      setBackground (Color.black);
+      setBackground (Color.red);
       timer.start();
 
    }
@@ -44,23 +44,60 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
    {
 	   this.height=getHeight();
 	   this.width=getWidth();
-	   
+
         super.paintComponent (page);
         Graphics2D g2d = (Graphics2D) page;
-        g2d.setColor(Color.RED);
+        g2d.setColor(Color.GRAY);
         Rectangle rect2 = new Rectangle(-25+x,-50+y, 50, 100);
+        
         g2d.translate(x, y);
         g2d.rotate(Math.toRadians(moveX));
         
         g2d.translate(-x, -y);
         g2d.fill(rect2);
         
+        g2d.setColor(Color.BLACK);
+        Rectangle rect3 = new Rectangle(-35+x,-40+y, 10, 25);
+        
+        g2d.translate(x, y);
+        g2d.rotate(Math.toRadians(moveX));
+        
+        g2d.translate(-x, -y);
+        g2d.fill(rect3);
+        
+        g2d.setColor(Color.BLACK);
+        Rectangle rect4 = new Rectangle(-35+x, 20+y, 10, 25);
+        
+        g2d.translate(x, y);
+        g2d.rotate(Math.toRadians(moveX));
+        
+        g2d.translate(-x, -y);
+        g2d.fill(rect4);
+        
+        
+        g2d.setColor(Color.BLACK);
+        Rectangle rect5 = new Rectangle(25+x,-40+y, 10, 25);
+        
+        g2d.translate(x, y);
+        g2d.rotate(Math.toRadians(moveX));
+        
+        g2d.translate(-x, -y);
+        g2d.fill(rect5);
+        
+        g2d.setColor(Color.BLACK);
+        Rectangle rect6 = new Rectangle(25+x, 20+y, 10, 25);
+        
+        g2d.translate(x, y);
+        g2d.rotate(Math.toRadians(moveX));
+        
+        g2d.translate(-x, -y);
+        g2d.fill(rect6);
    }
 	/** this method changes delay of the repaint method thought timer.
 	* @param delta determines what the change in the timer will be on click
 	*/
    public void actionPerformed(ActionEvent e){
-	   
+
 	   repaint();
        x+=moveY*Math.sin(Math.toRadians(moveX));
        y+=moveY*Math.cos(Math.toRadians(moveX));
@@ -97,6 +134,3 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
    public void keyTyped(KeyEvent e){}
    public void keyReleased(KeyEvent e){}
 }
-	
-
-
