@@ -25,8 +25,8 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
    {
       timer = new Timer(delay, this);
 
-      x = 50;
-      y = 50;
+      x = 200;
+      y = 200;
       moveX = moveY =0;
       addKeyListener(this);
       setFocusable(true);
@@ -44,26 +44,33 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
    {
 	   this.height=getHeight();
 	   this.width=getWidth();
+	   
         super.paintComponent (page);
         Graphics2D g2d = (Graphics2D) page;
         g2d.setColor(Color.RED);
-        Rectangle rect2 = new Rectangle(x,y, 100, 100);
+        Rectangle rect2 = new Rectangle(-25+x,-50+y, 50, 100);
+        g2d.translate(x, y);
         g2d.rotate(Math.toRadians(moveX));
+        
+        g2d.translate(-x, -y);
         g2d.fill(rect2);
+        
    }
 	/** this method changes delay of the repaint method thought timer.
 	* @param delta determines what the change in the timer will be on click
 	*/
    public void actionPerformed(ActionEvent e){
-       repaint();
-       //x+=moveX;
-       y+=moveY;
+	   
+	   repaint();
+       x+=moveY*Math.sin(Math.toRadians(moveX));
+       y+=moveY*Math.cos(Math.toRadians(moveX));
+       
    }
    public void up(){
-       moveY-=.1;
+       moveY-=1;
    }
    public void down(){
-       moveY+=.1;
+       moveY+=1;
    }
    public void left(){
        moveX-=1;
