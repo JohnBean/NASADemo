@@ -16,8 +16,8 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
    private ImageIcon image;
    private JButton faster,slower,pause;
 	private Timer timer;
-   private int x, y, moveX, moveY;
-
+   private int x, y, moveX;
+   private double moveY;
    //-----------------------------------------------------------------
    //  Sets up the panel, including the timer for the animation.
    //-----------------------------------------------------------------
@@ -27,7 +27,8 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
 
       x = 200;
       y = 200;
-      moveX = moveY =0;
+      moveX = 0;
+      moveY =0;
       addKeyListener(this);
       setFocusable(true);
       setFocusTraversalKeysEnabled(false);
@@ -51,7 +52,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
         Rectangle rect2 = new Rectangle(-25+x,-50+y, 50, 100);
         
         g2d.translate(x, y);
-        g2d.rotate(Math.toRadians(moveX));
+        //g2d.rotate(Math.toRadians(moveX));
         
         g2d.translate(-x, -y);
         g2d.fill(rect2);
@@ -104,10 +105,10 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
        
    }
    public void up(){
-       moveY-=1;
+       moveY-=.1;
    }
    public void down(){
-       moveY+=1;
+       moveY+=.1;
    }
    public void left(){
        moveX-=1;
@@ -128,9 +129,22 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
        }
        if(code==KeyEvent.VK_RIGHT){
            right();
-       }
-       
+       }  
    }
    public void keyTyped(KeyEvent e){}
-   public void keyReleased(KeyEvent e){}
+   public void keyReleased(KeyEvent e){
+	   int code = e.getKeyCode();
+       if(code==KeyEvent.VK_UP){
+           moveY=0;
+       }
+       if(code==KeyEvent.VK_DOWN){
+           moveY=0;
+       }
+       if(code==KeyEvent.VK_LEFT){
+        //   moveX=0;
+       }
+       if(code==KeyEvent.VK_RIGHT){
+         //  moveX=0;
+       }
+   }
 }
