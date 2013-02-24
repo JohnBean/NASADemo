@@ -100,21 +100,40 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
 		  
 		  else {
 			  g2d.setColor(Color.BLACK);
-	        Rectangle2D.Double frontLeftWheel = new Rectangle2D.Double(-35+x,-40+y, 10, 25);
+                          Rectangle2D.Double frontLeftWheel = new Rectangle2D.Double(-35+x,-40+y, 10, 25);
+	        g2d.translate(-35+5+x, -40+12.5+y);	//translate coordinates to center of wheel for rotation
+	        g2d.rotate(Math.toRadians(moveX));
+	        g2d.translate(35-5-x, 40-12.5-y);
+	        g2d.fill(frontLeftWheel);
+			  g2d.translate(-35+5+x, -40+12.5+y);	//translate coordinates back to origin
+	        g2d.rotate(Math.toRadians(-moveX));
+	        g2d.translate(35-5-x, 40-12.5-y);
+                
+                g2d.setColor(Color.BLACK);
+	        Rectangle2D.Double frontRightWheel = new Rectangle2D.Double(25+x,-40+y, 10, 25);
+			  g2d.translate(25+5+x, -40+12.5+y);	//translate coordinates to center of wheel for rotation
+	        g2d.rotate(Math.toRadians(moveX));
+	        g2d.translate(-25-5-x, 40-12.5-y);
+	        g2d.fill(frontRightWheel);
+			  g2d.translate(25+5+x, -40+12.5+y);	//translate coordinates back to origin
+	        g2d.rotate(Math.toRadians(-moveX));
+	        g2d.translate(-25-5-x, 40-12.5-y);
+                
+	       /* Rectangle2D.Double frontLeftWheel = new Rectangle2D.Double(-35+x,-40+y, 10, 25);
 	        g2d.translate(x, y);
 	        g2d.rotate(Math.toRadians(moveX));
 	        g2d.translate(-x, -y);
 	        g2d.fill(frontLeftWheel);
-	        
-	        g2d.setColor(Color.BLACK);
+	        */
+	      /*  g2d.setColor(Color.BLACK);
 	        Rectangle2D.Double frontRightWheel = new Rectangle2D.Double(25+x,-40+y, 10, 25);
 	        g2d.fill(frontRightWheel);
-	        
+	      */  
 			  g2d.setColor(Color.GRAY);
 	        Rectangle2D.Double body = new Rectangle2D.Double(-25+x,-50+y, 50, 100);
 			  g2d.translate(x, y);
-			  g2d.rotate(Math.toRadians(-moveX));
-			  g2d.rotate(Math.toRadians(moveX/2));
+			  //g2d.rotate(Math.toRadians(-moveX));
+			  //g2d.rotate(Math.toRadians(moveX/2));
 			  g2d.translate(-x,-y);
 	        g2d.fill(body);
 		  
@@ -139,12 +158,16 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
        y+=moveY*Math.cos(Math.toRadians(moveX));
    }	//end actionPerformed
    public void up(){
-       moveY-=.5;
-		 //moveX*=1.1;
+       moveY-=.1;
+	if(moveY<-2.5){
+            moveY=-2.5;
+        }	 //moveX*=1.1;
    }	//end up
    public void down(){
-       moveY+=.5;
-		 //moveX*=1.1;
+       moveY+=.1;
+	if(moveY>2){
+            moveY=2.5;
+        }//moveX*=1.1;
    }	//end down
    public void left(){
        moveX-=2;
@@ -156,29 +179,29 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
        int code = e.getKeyCode();
        if(code==KeyEvent.VK_UP){
            up();
-       }	//end if
+       }
        if(code==KeyEvent.VK_DOWN){
            down();
-       }	//end if
+       }
        if(code==KeyEvent.VK_LEFT){
            left();
-       }	//end if
+       }
        if(code==KeyEvent.VK_RIGHT){
            right();
-       } //end if 
-		 if(code==KeyEvent.VK_ENTER){
-		 	if(mode == false)	//switch steering mode on key input of enter
-				mode = true;
-			else
-				mode = false;
-		 }	//end if
+       }
+        if(code==KeyEvent.VK_ENTER){
+            if(mode == false)	//switch steering mode on key input of enter
+		mode = true;
+            else
+		mode = false;
+            }
    }	//end keyPressed
    public void keyTyped(KeyEvent e){}
    public void keyReleased(KeyEvent e){
 	   int code = e.getKeyCode();
        if(code==KeyEvent.VK_UP){
            //moveX = moveX*Math.pow(1.1,(moveY/.5));
-			  moveY=0;
+           moveY=0;
        }	//end if
        if(code==KeyEvent.VK_DOWN){
 		 	  //moveX = moveX*Math.pow(1.1,(moveY/.5));
