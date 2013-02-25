@@ -107,54 +107,62 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
 	    g2d.rotate(Math.toRadians(-wheelRotation));
 	    g2d.translate(35-5-x, -20-12.5-y);
         }	//end if (Crab) 
-	else {//Ackerman
+	else {//Ackermann
             wheelRotation+=rotationSpeed;
-            if(wheelRotation>60){
-                wheelRotation=60;
+            if((wheelRotation-roverRotation)>60){	//prevent over-rotating wheels
+                wheelRotation=roverRotation+60;
             }
-            else if(wheelRotation<-60){
-                wheelRotation=-60;
+            else if((wheelRotation-roverRotation)<-60){
+                wheelRotation=roverRotation-60;
             }
-            x-=moveY*Math.sin(Math.toRadians(roverRotation));
-            y+=moveY*Math.cos(Math.toRadians(roverRotation));
+				if(wheelRotation>360) {	//keep angles within -360 to 360 range
+					 wheelRotation-=360;
+					 roverRotation-=360;
+				}
+				else if(wheelRotation<-360) {
+					 wheelRotation+=360;
+					 roverRotation+=360;
+				}
+            x-=moveY*Math.sin(Math.toRadians(wheelRotation));
+            y+=moveY*Math.cos(Math.toRadians(wheelRotation));
             g2d.setColor(Color.BLACK);
             Rectangle2D.Double frontLeftWheel = new Rectangle2D.Double(-35+x,-40+y, 10, 25);
-	    g2d.translate(-35+5+x, -40+12.5+y);	//translate coordinates to center of wheel for rotation
+	    g2d.translate(x, y);	//translate coordinates to center of wheel for rotation
 	    g2d.rotate(Math.toRadians(wheelRotation));
-	    g2d.translate(35-5-x, 40-12.5-y);
+	    g2d.translate(-x, -y);
 	    g2d.fill(frontLeftWheel);
-            g2d.translate(-35+5+x, -40+12.5+y);	//translate coordinates back to origin
+       /*     g2d.translate(-35+5+x, -40+12.5+y);	//translate coordinates back to origin
 	    g2d.rotate(Math.toRadians(-wheelRotation));
-	    g2d.translate(35-5-x, 40-12.5-y);
+	    g2d.translate(35-5-x, 40-12.5-y);*/
                 
             g2d.setColor(Color.BLACK);
 	    Rectangle2D.Double frontRightWheel = new Rectangle2D.Double(25+x,-40+y, 10, 25);
-            g2d.translate(25+5+x, -40+12.5+y);	//translate coordinates to center of wheel for rotation
+            /*g2d.translate(25+5+x, -40+12.5+y);	//translate coordinates to center of wheel for rotation
 	    g2d.rotate(Math.toRadians(wheelRotation));
-	    g2d.translate(-25-5-x, 40-12.5-y);
+	    g2d.translate(-25-5-x, 40-12.5-y);*/
 	    g2d.fill(frontRightWheel);
-            g2d.translate(25+5+x, -40+12.5+y);	//translate coordinates back to origin
+            /*g2d.translate(25+5+x, -40+12.5+y);	//translate coordinates back to origin
 	    g2d.rotate(Math.toRadians(-wheelRotation));
-	    g2d.translate(-25-5-x, 40-12.5-y);
+	    g2d.translate(-25-5-x, 40-12.5-y);*/
 
             g2d.setColor(Color.GRAY);
 	    Rectangle2D.Double body = new Rectangle2D.Double(-25+x,-50+y, 50, 100);
             g2d.translate(x, y);
-            g2d.rotate(Math.toRadians(-roverRotation));
-            g2d.rotate(Math.toRadians(roverRotation/2));
-            g2d.translate(-x,-y);
+				g2d.rotate(Math.toRadians(-wheelRotation));
+            g2d.rotate(Math.toRadians(roverRotation));
+            g2d.translate(-x, -y);
 	    g2d.fill(body);
             
             g2d.setColor(Color.BLACK);
 	    Rectangle2D.Double backRightWheel = new Rectangle2D.Double(25+x, 20+y, 10, 25);
-            g2d.rotate(Math.toRadians(-roverRotation));
-            g2d.rotate(Math.toRadians(roverRotation/2));
+            //g2d.rotate(Math.toRadians(-roverRotation));
+            //g2d.rotate(Math.toRadians(roverRotation/2));
 	    g2d.fill(backRightWheel);
             
             g2d.setColor(Color.BLACK);
 	    Rectangle2D.Double backLeftWheel = new Rectangle2D.Double(-35+x, 20+y, 10, 25);
-            g2d.rotate(Math.toRadians(-roverRotation));
-            g2d.rotate(Math.toRadians(roverRotation/2));
+            //g2d.rotate(Math.toRadians(-roverRotation));
+            //g2d.rotate(Math.toRadians(roverRotation/2));
 	    g2d.fill(backLeftWheel);
         }	//end else (Ackermann)
     }	//end paintComponent
@@ -168,15 +176,21 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
     }	//end actionPerformed
     public void up(){
         moveY-=.2;
-	if(moveY<-2.5){
+		  double tempRot = wheelRotation;
+		  wheelRotation += (wheelRotation-roverRotation)/5;	//the 5 is arbitrary
+		  roverRotation += wheelRotation-tempRot;	//constant rotation difference b/w rover & wheels
+		  if(moveY<-2.5){
             moveY=-2.5;
         }
     }	//end up
     public void down(){
         moveY+=.2;
-	if(moveY>2){
+		  double tempRot = wheelRotation;
+		  wheelRotation -= (wheelRotation-roverRotation)/5;
+		  roverRotation += wheelRotation-tempRot;
+		  if(moveY>2.5){
             moveY=2.5;
-        }//moveX*=1.1;
+        }
     }	//end down
     public void left(){
         rotationSpeed-=.2;
