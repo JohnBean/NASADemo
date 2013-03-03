@@ -10,6 +10,8 @@ import java.awt.geom.*;
 
 public class RoverPanel extends JPanel implements ActionListener, KeyListener
 {
+    private static Font sanSerifFont = new Font("SanSerif", Font.PLAIN, 12);
+
     private int width = 600, height = 600;
     public int delay=5;
     private final int IMAGE_SIZE = 35;
@@ -53,13 +55,22 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
         this.width=getWidth();
         super.paintComponent (page);
         Graphics2D g2d = (Graphics2D) page;
+        g2d.setFont(sanSerifFont);
+        FontMetrics fm = g2d.getFontMetrics();
+        
 	if(rotationSpeed>2.5){
             rotationSpeed=2.5;
         }	  
         if(rotationSpeed<-2.5){
             rotationSpeed= -2.5;
         }
+        int w = fm.stringWidth("Enter: Change modes   Up/Down: Move    Left/Right: Steer");
+        int h = fm.getAscent();
+        g2d.drawString("Enter: Change modes   Up/Down: Move    Left/Right: Steer", 400 - (w / 2), 10 + (h / 4));
 	if(mode) {//Crab
+            w = fm.stringWidth("Crab Steering");
+            h = fm.getAscent();
+            g2d.drawString("Crab Steering", 100 - (w / 2), 10 + (h / 4));
             wheelRotation+=rotationSpeed;
             x-=moveY*Math.sin(Math.toRadians(wheelRotation));
             y+=moveY*Math.cos(Math.toRadians(wheelRotation));
@@ -108,6 +119,9 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
 	    g2d.translate(35-5-x, -20-12.5-y);
         }	//end if (Crab) 
 	else {//Ackermann
+            w = fm.stringWidth("Ackerman Steering");
+            h = fm.getAscent();
+            g2d.drawString("Ackerman Steering", 100 - (w / 2), 10 + (h / 4));
             wheelRotation+=rotationSpeed;
             if((wheelRotation-roverRotation)>60){	//prevent over-rotating wheels
                 wheelRotation=roverRotation+60;
