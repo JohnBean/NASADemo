@@ -7,12 +7,13 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.awt.geom.*;
+import java.lang.*;
 
 public class RoverPanel extends JPanel implements ActionListener, KeyListener
 {
     private static Font sanSerifFont = new Font("SanSerif", Font.PLAIN, 12);
 
-    private int width = 600, height = 600;
+    private int width = 800, height = 800;
     public int delay=5;
     private final int IMAGE_SIZE = 35;
     private ImageIcon image;
@@ -30,7 +31,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
         timer = new Timer(delay, this);
 
         x = 200;
-        y = 200;
+        y = 700;
         moveX = 0;
         moveY =0;
         roverRotation = wheelRotation = 0;
@@ -41,7 +42,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
         setPreferredSize (new Dimension(width, height));
-        setBackground (Color.red);
+        setBackground (Color.lightGray);
         timer.start();
    }
 
@@ -57,7 +58,39 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
         Graphics2D g2d = (Graphics2D) page;
         g2d.setFont(sanSerifFont);
         FontMetrics fm = g2d.getFontMetrics();
+        //Add in obstacles
+        g2d.setColor(Color.orange);
+        Ellipse2D.Double obs1 = new Ellipse2D.Double(50, 600, 60, 60);
+	    g2d.fill(obs1);
         
+	    Ellipse2D.Double obs2 = new Ellipse2D.Double(200, 400, 20, 20);
+	    g2d.fill(obs2);
+	    
+	    Ellipse2D.Double obs3 = new Ellipse2D.Double(300, 300, 20, 20);
+	    g2d.fill(obs3);
+	    
+	    Ellipse2D.Double obs4 = new Ellipse2D.Double(400, 400, 20, 20);
+	    g2d.fill(obs4);
+	    
+	    Ellipse2D.Double obs5 = new Ellipse2D.Double(200, 200, 25, 25);
+	    g2d.fill(obs5);
+	    
+	    Ellipse2D.Double obs6 = new Ellipse2D.Double(300, 100, 20, 20);
+	    g2d.fill(obs6);
+	    
+	    Ellipse2D.Double obs7 = new Ellipse2D.Double(500, 600, 40, 40);
+	    g2d.fill(obs7);
+	    
+	    Ellipse2D.Double obs8 = new Ellipse2D.Double(600, 415, 60, 60);
+	    g2d.fill(obs8);
+	    
+	    Ellipse2D.Double obs9 = new Ellipse2D.Double(500, 275, 40, 40);
+	    g2d.fill(obs9);
+	    
+	    Ellipse2D.Double obs10 = new Ellipse2D.Double(550, 150, 40, 40);
+	    g2d.fill(obs10);
+	    
+	    g2d.setColor(Color.black);
 	if(rotationSpeed>2.5){
             rotationSpeed=2.5;
         }	  
@@ -77,7 +110,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
             g2d.setColor(Color.GRAY);
 	    Rectangle2D.Double body = new Rectangle2D.Double(-25+x,-50+y, 50, 100);
 	    g2d.fill(body);
-		  
+
             g2d.setColor(Color.BLACK);
             Rectangle2D.Double frontLeftWheel = new Rectangle2D.Double(-35+x,-40+y, 10, 25);
 	    g2d.translate(-35+5+x, -40+12.5+y);	//translate coordinates to center of wheel for rotation
@@ -87,7 +120,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
             g2d.translate(-35+5+x, -40+12.5+y);	//translate coordinates back to origin
 	    g2d.rotate(Math.toRadians(-wheelRotation));
 	    g2d.translate(35-5-x, 40-12.5-y);
-	        
+
 	    g2d.setColor(Color.BLACK);
 	    Rectangle2D.Double frontRightWheel = new Rectangle2D.Double(25+x,-40+y, 10, 25);
             g2d.translate(25+5+x, -40+12.5+y);	//translate coordinates to center of wheel for rotation
@@ -97,7 +130,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
             g2d.translate(25+5+x, -40+12.5+y);	//translate coordinates back to origin
 	    g2d.rotate(Math.toRadians(-wheelRotation));
 	    g2d.translate(-25-5-x, 40-12.5-y);
-		  
+
             g2d.setColor(Color.BLACK);
 	    Rectangle2D.Double backRightWheel = new Rectangle2D.Double(25+x, 20+y, 10, 25);
 	    g2d.translate(25+5+x, 20+12.5+y);	//translate coordinates to center of wheel for rotation
@@ -107,7 +140,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
             g2d.translate(25+5+x, 20+12.5+y);	//translate coordinates back to origin
 	    g2d.rotate(Math.toRadians(-wheelRotation));
 	    g2d.translate(-25-5-x, -20-12.5-y);
-			  
+
             g2d.setColor(Color.BLACK);
 	    Rectangle2D.Double backLeftWheel = new Rectangle2D.Double(-35+x, 20+y, 10, 25);
 	    g2d.translate(-35+5+x, 20+12.5+y);	//translate coordinates to center of wheel for rotation
@@ -119,9 +152,9 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
 	    g2d.translate(35-5-x, -20-12.5-y);
         }	//end if (Crab) 
 	else {//Ackermann
-            w = fm.stringWidth("Ackerman Steering");
+            w = fm.stringWidth("Ackermann Steering");
             h = fm.getAscent();
-            g2d.drawString("Ackerman Steering", 100 - (w / 2), 10 + (h / 4));
+            g2d.drawString("Ackermann Steering", 100 - (w / 2), 10 + (h / 4));
             wheelRotation+=rotationSpeed;
             if((wheelRotation-roverRotation)>60){	//prevent over-rotating wheels
                 wheelRotation=roverRotation+60;
@@ -180,7 +213,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
 	    g2d.fill(backLeftWheel);
         }	//end else (Ackermann)
     }	//end paintComponent
-	
+
 	/** this method changes delay of the repaint method thought timer.
 	* @param delta determines what the change in the timer will be on click
 	*/
@@ -257,4 +290,3 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
         }	//end if
     }	//end keyReleased	
 }
-	
