@@ -62,36 +62,36 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
         //Add in obstacles
         g2d.setColor(Color.orange);
         Ellipse2D.Double obs1 = new Ellipse2D.Double(50, 600, 60, 60);
-	    g2d.fill(obs1);
-        
-	    Ellipse2D.Double obs2 = new Ellipse2D.Double(200, 400, 20, 20);
-	    g2d.fill(obs2);
-	    
-	    Ellipse2D.Double obs3 = new Ellipse2D.Double(300, 300, 20, 20);
-	    g2d.fill(obs3);
-	    
-	    Ellipse2D.Double obs4 = new Ellipse2D.Double(400, 400, 20, 20);
-	    g2d.fill(obs4);
-	    
-	    Ellipse2D.Double obs5 = new Ellipse2D.Double(200, 200, 25, 25);
-	    g2d.fill(obs5);
-	    
-	    Ellipse2D.Double obs6 = new Ellipse2D.Double(300, 100, 20, 20);
-	    g2d.fill(obs6);
-	    
-	    Ellipse2D.Double obs7 = new Ellipse2D.Double(500, 600, 40, 40);
-	    g2d.fill(obs7);
-	    
-	    Ellipse2D.Double obs8 = new Ellipse2D.Double(600, 415, 60, 60);
-	    g2d.fill(obs8);
-	    
-	    Ellipse2D.Double obs9 = new Ellipse2D.Double(500, 275, 40, 40);
-	    g2d.fill(obs9);
-	    
-	    Ellipse2D.Double obs10 = new Ellipse2D.Double(550, 150, 40, 40);
-	    g2d.fill(obs10);
-	    
-	    g2d.setColor(Color.black);
+        g2d.fill(obs1);
+
+        Ellipse2D.Double obs2 = new Ellipse2D.Double(200, 400, 20, 20);
+        g2d.fill(obs2);
+
+        Ellipse2D.Double obs3 = new Ellipse2D.Double(300, 300, 20, 20);
+        g2d.fill(obs3);
+
+        Ellipse2D.Double obs4 = new Ellipse2D.Double(400, 400, 20, 20);
+        g2d.fill(obs4);
+
+        Ellipse2D.Double obs5 = new Ellipse2D.Double(200, 200, 25, 25);
+        g2d.fill(obs5);
+
+        Ellipse2D.Double obs6 = new Ellipse2D.Double(300, 100, 20, 20);
+        g2d.fill(obs6);
+
+        Ellipse2D.Double obs7 = new Ellipse2D.Double(500, 600, 40, 40);
+        g2d.fill(obs7);
+
+        Ellipse2D.Double obs8 = new Ellipse2D.Double(600, 415, 60, 60);
+        g2d.fill(obs8);
+
+        Ellipse2D.Double obs9 = new Ellipse2D.Double(500, 275, 40, 40);
+        g2d.fill(obs9);
+
+        Ellipse2D.Double obs10 = new Ellipse2D.Double(550, 150, 40, 40);
+        g2d.fill(obs10);
+
+        g2d.setColor(Color.black);
 	if(rotationSpeed>2.5){
             rotationSpeed=2.5;
         }	  
@@ -154,9 +154,18 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
                 g2d.translate(35-5-x, -20-12.5-y);
             }
             else{
+                roverRotation+=roverRotationSpeed;
                 g2d.setColor(Color.GRAY);
                 Rectangle2D.Double body = new Rectangle2D.Double(-25+x,-50+y, 50, 100);
+                g2d.translate(x, y);
+                //g2d.rotate(Math.toRadians(-wheelRotation));
+                g2d.rotate(Math.toRadians(roverRotation));
+                g2d.translate(-x, -y);
                 g2d.fill(body);
+                /*g2d.setColor(Color.GRAY);
+                Rectangle2D.Double body = new Rectangle2D.Double(-25+x,-50+y, 50, 100);
+                g2d.rotate(Math.toRadians(roverRotation));
+                g2d.fill(body);*/
                 //this is where the thing rotates about its center
             }
         }	//end if (Crab) 
@@ -171,14 +180,14 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
             else if((wheelRotation-roverRotation)<-60){
                 wheelRotation=roverRotation-60;
             }
-				if(wheelRotation>360) {	//keep angles within -360 to 360 range
-					 wheelRotation-=360;
-					 roverRotation-=360;
-				}
-				else if(wheelRotation<-360) {
-					 wheelRotation+=360;
-					 roverRotation+=360;
-				}
+            if(wheelRotation>360) {	//keep angles within -360 to 360 range
+                     wheelRotation-=360;
+                     roverRotation-=360;
+            }
+            else if(wheelRotation<-360) {
+                     wheelRotation+=360;
+                     roverRotation+=360;
+            }
             x-=moveY*Math.sin(Math.toRadians(wheelRotation));
             y+=moveY*Math.cos(Math.toRadians(wheelRotation));
             g2d.setColor(Color.BLACK);
@@ -204,7 +213,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
             g2d.setColor(Color.GRAY);
 	    Rectangle2D.Double body = new Rectangle2D.Double(-25+x,-50+y, 50, 100);
             g2d.translate(x, y);
-				g2d.rotate(Math.toRadians(-wheelRotation));
+            g2d.rotate(Math.toRadians(-wheelRotation));
             g2d.rotate(Math.toRadians(roverRotation));
             g2d.translate(-x, -y);
 	    g2d.fill(body);
@@ -232,25 +241,24 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
     }	//end actionPerformed
     public void up(){
         moveY-=.2;
-		  double tempRot = wheelRotation;
-		 if(!mode){
-                     wheelRotation += (wheelRotation-roverRotation)/5;
+	double tempRot = wheelRotation;
+	if(!mode){
+            wheelRotation += (wheelRotation-roverRotation)/5;
                  	//the 5 is arbitrary
-                    roverRotation += wheelRotation-tempRot;	//constant rotation difference b/w rover & wheels
-                 }
-		  if(moveY<-2.5){
+            roverRotation += wheelRotation-tempRot;	//constant rotation difference b/w rover & wheels
+        }
+	if(moveY<-2.5){
             moveY=-2.5;
         }
     }	//end up
     public void down(){
         moveY+=.2;
-		  double tempRot = wheelRotation;
-		 if(!mode){
-                     wheelRotation -= (wheelRotation-roverRotation)/5;
-                 
-		  roverRotation += wheelRotation-tempRot;
-                 }
-		  if(moveY>2.5){
+        double tempRot = wheelRotation;
+        if(!mode){
+            wheelRotation -= (wheelRotation-roverRotation)/5;
+            roverRotation += wheelRotation-tempRot;
+        }
+        if(moveY>2.5){
             moveY=2.5;
         }
     }	//end down
