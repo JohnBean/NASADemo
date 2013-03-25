@@ -154,7 +154,9 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
                 g2d.translate(35-5-x, -20-12.5-y);
             }
             else{
-                
+                g2d.setColor(Color.GRAY);
+                Rectangle2D.Double body = new Rectangle2D.Double(-25+x,-50+y, 50, 100);
+                g2d.fill(body);
                 //this is where the thing rotates about its center
             }
         }	//end if (Crab) 
@@ -231,8 +233,11 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
     public void up(){
         moveY-=.2;
 		  double tempRot = wheelRotation;
-		  wheelRotation += (wheelRotation-roverRotation)/5;	//the 5 is arbitrary
-		  roverRotation += wheelRotation-tempRot;	//constant rotation difference b/w rover & wheels
+		 if(!mode){
+                     wheelRotation += (wheelRotation-roverRotation)/5;
+                 	//the 5 is arbitrary
+                    roverRotation += wheelRotation-tempRot;	//constant rotation difference b/w rover & wheels
+                 }
 		  if(moveY<-2.5){
             moveY=-2.5;
         }
@@ -240,8 +245,11 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
     public void down(){
         moveY+=.2;
 		  double tempRot = wheelRotation;
-		  wheelRotation -= (wheelRotation-roverRotation)/5;
+		 if(!mode){
+                     wheelRotation -= (wheelRotation-roverRotation)/5;
+                 
 		  roverRotation += wheelRotation-tempRot;
+                 }
 		  if(moveY>2.5){
             moveY=2.5;
         }
