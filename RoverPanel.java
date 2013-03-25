@@ -21,7 +21,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
     private JButton modeButton;
     private Timer timer;
     private double x, y, moveX, moveY;
-    private double roverRotation, wheelRotation, rotationSpeed;
+    private double roverRotation, wheelRotation, rotationSpeed, roverRotationSpeed;
     private boolean mode;		//mode = false -> Ackermann, mode = true -> Crab
    //-----------------------------------------------------------------
    //  Sets up the panel, including the timer for the animation.
@@ -36,6 +36,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
         moveY =0;
         roverRotation = wheelRotation = 0;
         rotationSpeed=0;
+        roverRotationSpeed=0;
         mode = false;
         setFocusable(false);
         addKeyListener(this);
@@ -105,51 +106,57 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
             h = fm.getAscent();
             g2d.drawString("Crab Steering", 100 - (w / 2), 10 + (h / 4));
             wheelRotation+=rotationSpeed;
-            x-=moveY*Math.sin(Math.toRadians(wheelRotation));
-            y+=moveY*Math.cos(Math.toRadians(wheelRotation));
-            g2d.setColor(Color.GRAY);
-	    Rectangle2D.Double body = new Rectangle2D.Double(-25+x,-50+y, 50, 100);
-	    g2d.fill(body);
+            if(roverRotationSpeed==0){
+                x-=moveY*Math.sin(Math.toRadians(wheelRotation));
+                y+=moveY*Math.cos(Math.toRadians(wheelRotation));
+                g2d.setColor(Color.GRAY);
+                Rectangle2D.Double body = new Rectangle2D.Double(-25+x,-50+y, 50, 100);
+                g2d.fill(body);
 
-            g2d.setColor(Color.BLACK);
-            Rectangle2D.Double frontLeftWheel = new Rectangle2D.Double(-35+x,-40+y, 10, 25);
-	    g2d.translate(-35+5+x, -40+12.5+y);	//translate coordinates to center of wheel for rotation
-	    g2d.rotate(Math.toRadians(wheelRotation));
-	    g2d.translate(35-5-x, 40-12.5-y);
-	    g2d.fill(frontLeftWheel);
-            g2d.translate(-35+5+x, -40+12.5+y);	//translate coordinates back to origin
-	    g2d.rotate(Math.toRadians(-wheelRotation));
-	    g2d.translate(35-5-x, 40-12.5-y);
+                g2d.setColor(Color.BLACK);
+                Rectangle2D.Double frontLeftWheel = new Rectangle2D.Double(-35+x,-40+y, 10, 25);
+                g2d.translate(-35+5+x, -40+12.5+y);	//translate coordinates to center of wheel for rotation
+                g2d.rotate(Math.toRadians(wheelRotation));
+                g2d.translate(35-5-x, 40-12.5-y);
+                g2d.fill(frontLeftWheel);
+                g2d.translate(-35+5+x, -40+12.5+y);	//translate coordinates back to origin
+                g2d.rotate(Math.toRadians(-wheelRotation));
+                g2d.translate(35-5-x, 40-12.5-y);
 
-	    g2d.setColor(Color.BLACK);
-	    Rectangle2D.Double frontRightWheel = new Rectangle2D.Double(25+x,-40+y, 10, 25);
-            g2d.translate(25+5+x, -40+12.5+y);	//translate coordinates to center of wheel for rotation
-	    g2d.rotate(Math.toRadians(wheelRotation));
-	    g2d.translate(-25-5-x, 40-12.5-y);
-	    g2d.fill(frontRightWheel);
-            g2d.translate(25+5+x, -40+12.5+y);	//translate coordinates back to origin
-	    g2d.rotate(Math.toRadians(-wheelRotation));
-	    g2d.translate(-25-5-x, 40-12.5-y);
+                g2d.setColor(Color.BLACK);
+                Rectangle2D.Double frontRightWheel = new Rectangle2D.Double(25+x,-40+y, 10, 25);
+                g2d.translate(25+5+x, -40+12.5+y);	//translate coordinates to center of wheel for rotation
+                g2d.rotate(Math.toRadians(wheelRotation));
+                g2d.translate(-25-5-x, 40-12.5-y);
+                g2d.fill(frontRightWheel);
+                g2d.translate(25+5+x, -40+12.5+y);	//translate coordinates back to origin
+                g2d.rotate(Math.toRadians(-wheelRotation));
+                g2d.translate(-25-5-x, 40-12.5-y);
 
-            g2d.setColor(Color.BLACK);
-	    Rectangle2D.Double backRightWheel = new Rectangle2D.Double(25+x, 20+y, 10, 25);
-	    g2d.translate(25+5+x, 20+12.5+y);	//translate coordinates to center of wheel for rotation
-	    g2d.rotate(Math.toRadians(wheelRotation));
-	    g2d.translate(-25-5-x, -20-12.5-y);
-	    g2d.fill(backRightWheel);
-            g2d.translate(25+5+x, 20+12.5+y);	//translate coordinates back to origin
-	    g2d.rotate(Math.toRadians(-wheelRotation));
-	    g2d.translate(-25-5-x, -20-12.5-y);
+                g2d.setColor(Color.BLACK);
+                Rectangle2D.Double backRightWheel = new Rectangle2D.Double(25+x, 20+y, 10, 25);
+                g2d.translate(25+5+x, 20+12.5+y);	//translate coordinates to center of wheel for rotation
+                g2d.rotate(Math.toRadians(wheelRotation));
+                g2d.translate(-25-5-x, -20-12.5-y);
+                g2d.fill(backRightWheel);
+                g2d.translate(25+5+x, 20+12.5+y);	//translate coordinates back to origin
+                g2d.rotate(Math.toRadians(-wheelRotation));
+                g2d.translate(-25-5-x, -20-12.5-y);
 
-            g2d.setColor(Color.BLACK);
-	    Rectangle2D.Double backLeftWheel = new Rectangle2D.Double(-35+x, 20+y, 10, 25);
-	    g2d.translate(-35+5+x, 20+12.5+y);	//translate coordinates to center of wheel for rotation
-	    g2d.rotate(Math.toRadians(wheelRotation));
-	    g2d.translate(35-5-x, -20-12.5-y);
-	    g2d.fill(backLeftWheel);
-            g2d.translate(-35+5+x, 20+12.5+y);	//translate coordinates back to origin
-	    g2d.rotate(Math.toRadians(-wheelRotation));
-	    g2d.translate(35-5-x, -20-12.5-y);
+                g2d.setColor(Color.BLACK);
+                Rectangle2D.Double backLeftWheel = new Rectangle2D.Double(-35+x, 20+y, 10, 25);
+                g2d.translate(-35+5+x, 20+12.5+y);	//translate coordinates to center of wheel for rotation
+                g2d.rotate(Math.toRadians(wheelRotation));
+                g2d.translate(35-5-x, -20-12.5-y);
+                g2d.fill(backLeftWheel);
+                g2d.translate(-35+5+x, 20+12.5+y);	//translate coordinates back to origin
+                g2d.rotate(Math.toRadians(-wheelRotation));
+                g2d.translate(35-5-x, -20-12.5-y);
+            }
+            else{
+                
+                //this is where the thing rotates about its center
+            }
         }	//end if (Crab) 
 	else {//Ackermann
             w = fm.stringWidth("Ackermann Steering");
@@ -245,9 +252,27 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
     public void right(){
         rotationSpeed+=.2;
     }	//end right
+    public void rotateRoverLeft(){
+        roverRotationSpeed +=.2;
+        if(roverRotationSpeed>2){
+            roverRotationSpeed=2;
+        }
+    }
+    public void rotateRoverRight(){
+        roverRotationSpeed -=.2;
+        if(roverRotationSpeed<-2){
+            roverRotationSpeed= -2;
+        }
+    }
     @Override
     public void keyPressed(KeyEvent e){
         int code = e.getKeyCode();
+        if(code ==KeyEvent.VK_A){
+            rotateRoverLeft();
+        }
+        if(code ==KeyEvent.VK_S){
+            rotateRoverRight();
+        }
         if(code==KeyEvent.VK_UP){
             up();
         }
@@ -274,6 +299,12 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
     @Override
     public void keyReleased(KeyEvent e){
         int code = e.getKeyCode();
+        if(code ==KeyEvent.VK_A){
+            roverRotationSpeed=0;
+        }
+        if(code ==KeyEvent.VK_S){
+            roverRotationSpeed=0;
+        }
         if(code==KeyEvent.VK_UP){
             moveY=0;
         }	//end if
