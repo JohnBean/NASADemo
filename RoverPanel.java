@@ -244,11 +244,11 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
             h = fm.getAscent();
             g2d.drawString("Ackermann Steering", 100 - (w / 2), 10 + (h / 4));
             wheelRotation+=rotationSpeed;
-            if((wheelRotation-roverRotation)>60){	//prevent over-rotating wheels
-                wheelRotation=roverRotation+60;
+            if((wheelRotation-roverRotation)>40){	//prevent over-rotating wheels
+                wheelRotation=roverRotation+40;
             }
-            else if((wheelRotation-roverRotation)<-60){
-                wheelRotation=roverRotation-60;
+            else if((wheelRotation-roverRotation)<-40){
+                wheelRotation=roverRotation-40;
             }
             if(wheelRotation>360) {	//keep angles within -360 to 360 range
                      wheelRotation-=360;
