@@ -8,9 +8,12 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.awt.geom.*;
 import java.lang.*;
+import wiiremotej.*;
+import wiiremotej.event.*;
 
-public class RoverPanel extends JPanel implements ActionListener, KeyListener
+public class RoverPanel extends JPanel implements ActionListener, KeyListener, WiiRemoteListener
 {
+	 
     private static Font sanSerifFont = new Font("SanSerif", Font.PLAIN, 12);
 
     private int width = 800, height = 800;
@@ -23,6 +26,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
     private double x, y, moveX, moveY;
     private double roverRotation, wheelRotation, rotationSpeed, roverRotationSpeed;
     private boolean mode;		//mode = false -> Ackermann, mode = true -> Crab
+	 protected WiiRemote remote;
    //-----------------------------------------------------------------
    //  Sets up the panel, including the timer for the animation.
    //-----------------------------------------------------------------
@@ -37,6 +41,30 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
         roverRotation = wheelRotation = 0;
         rotationSpeed=0;
         roverRotationSpeed=0;
+		  remote = null;
+		  try {
+	     	  WiiRemoteJ.setConsoleLoggingAll(); 
+			  while (remote == null) {
+	         	try {
+	            	remote = WiiRemoteJ.findRemote();
+	            }
+	            catch(Exception e) {
+	               remote = null;
+	               e.printStackTrace();
+	               System.out.println("Failed to connect remote. Trying again.");
+	            }
+					Thread.sleep(10000);
+	         }
+				remote.addWiiRemoteListener(this);
+      		remote.setAccelerometerEnabled(true);
+      		remote.setSpeakerEnabled(true);
+      		remote.setIRSensorEnabled(true, WRIREvent.BASIC);
+      		remote.setLEDIlluminated(0, true);
+	   		remote.getButtonMaps().add(new ButtonMap(WRButtonEvent.HOME, ButtonMap.NUNCHUK, WRNunchukExtensionEvent.C, new int[]{java.awt.event.KeyEvent.VK_CONTROL}, 
+                java.awt.event.InputEvent.BUTTON1_MASK, 0, -1));
+		  }
+		  catch(Exception e) {e.printStackTrace();}
+
         mode = false;
         setFocusable(false);
         addKeyListener(this);
@@ -46,7 +74,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
         setBackground (Color.lightGray);
         timer.start();
    }
-
+	
    //-----------------------------------------------------------------
    //  Draws the image in the current location.
    //-----------------------------------------------------------------
@@ -380,4 +408,100 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener
             //moveX=0;
         }	//end if
     }	//end keyReleased	
+
+/*Wiimote functions*/
+
+    public void disconnected() {
+        System.out.println("Remote disconnected... Please Wii again.");
+        System.exit(0);
+    }
+	 
+	 public void accelerationInputReceived(WRAccelerationEvent evt) {
+        //System.out.println("R: " + evt.getRoll());
+        //System.out.println("P: " + evt.getPitch());
+        /*if (accelerometerSource)
+        {
+            lastX = x;
+            lastY = y;
+            lastZ = z;
+            
+            x = (int)(evt.getXAcceleration()/5*300)+300;
+            y = (int)(evt.getYAcceleration()/5*300)+300;
+            z = (int)(evt.getZAcceleration()/5*300)+300;
+            
+            t++;
+            
+            graph.repaint();
+        }*/
+        
+        /*System.out.println("---Acceleration Data---");
+        System.out.println("X: " + evt.getXAcceleration());
+        System.out.println("Y: " + evt.getYAcceleration());
+        System.out.println("Z: " + evt.getZAcceleration());
+        */
+    }
+	 
+	 public void buttonInputReceived(WRButtonEvent evt) {
+        /*if (evt.wasPressed(WRButtonEvent.TWO))System.out.println("2");
+        if (evt.wasPressed(WRButtonEvent.ONE))System.out.println("1");
+        if (evt.wasPressed(WRButtonEvent.B))System.out.println("B");*/
+        if (evt.wasPressed(WRButtonEvent.A))
+		  		mode = !mode;
+        if (evt.wasPressed(WRButtonEvent.MINUS))
+		  		rotateRoverLeft();
+        if (evt.wasPressed(WRButtonEvent.HOME))
+		  		rotateRoverRight();
+        if (evt.wasPressed(WRButtonEvent.LEFT))
+		  		left();
+        if (evt.wasPressed(WRButtonEvent.RIGHT))
+		  		right();
+        if (evt.wasPressed(WRButtonEvent.DOWN))
+		  		down();
+        if (evt.wasPressed(WRButtonEvent.UP))
+		  		up();
+        /*if (evt.wasPressed(WRButtonEvent.PLUS))System.out.println("Plus");
+        /**/
+        
+    }
+
+	public void combinedInputReceived(WRCombinedEvent evt) {
+	
+	}
+	
+	public void extensionConnected(WiiRemoteExtension extension)
+    {
+        System.out.println("Extension connected!");
+        try
+        {
+            remote.setExtensionEnabled(true);
+        }catch(Exception e){e.printStackTrace();}
+    }
+    
+    public void extensionPartiallyInserted()
+    {
+        System.out.println("Extension partially inserted. Fix it!");
+    }
+    
+    public void extensionUnknown()
+    {
+        System.out.println("Extension unknown.");
+    }
+    
+    public void extensionDisconnected(WiiRemoteExtension extension)
+    {
+        System.out.println("Extension disconnected.");
+	 }
+	
+	public void extensionInputReceived(WRExtensionEvent evt) {
+	
+	}
+	
+	public void IRInputReceived(WRIREvent evt) {
+	
+	}
+	
+	public void statusReported(WRStatusEvent evt) {
+	
+	}
+	 	 
 }
