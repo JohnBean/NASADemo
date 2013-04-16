@@ -26,7 +26,19 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
     private double x, y, moveX, moveY;
     private double roverRotation, wheelRotation, rotationSpeed, roverRotationSpeed;
     private boolean mode;		//mode = false -> Ackermann, mode = true -> Crab
-	 protected WiiRemote remote;
+	 private WiiRemote remote;
+	 private static boolean accelerometerSource = true;
+	 private static int accelerometerStatus = 0;
+	 private static int xAccel = 0;
+	 private static int yAccel = 0;
+	 private static int zAccel = 0;
+	 private static int xAverage = 0;
+	 private static int yAverage = 0;
+	 private static int zAverage = 0;
+	 private boolean calibrated;
+	 private static double pitch = 0;
+	 private static double roll = 0;
+	 
    //-----------------------------------------------------------------
    //  Sets up the panel, including the timer for the animation.
    //-----------------------------------------------------------------
@@ -53,7 +65,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
 	               e.printStackTrace();
 	               System.out.println("Failed to connect remote. Trying again.");
 	            }
-					Thread.sleep(10000);
+					Thread.sleep(5000);
 	         }
 				remote.addWiiRemoteListener(this);
       		remote.setAccelerometerEnabled(true);
@@ -65,6 +77,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
 		  }
 		  catch(Exception e) {e.printStackTrace();}
 
+		  calibrated = false;
         mode = false;
         setFocusable(false);
         addKeyListener(this);
@@ -417,52 +430,81 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
     }
 	 
 	 public void accelerationInputReceived(WRAccelerationEvent evt) {
-        //System.out.println("R: " + evt.getRoll());
-        //System.out.println("P: " + evt.getPitch());
-        /*if (accelerometerSource)
-        {
-            lastX = x;
-            lastY = y;
-            lastZ = z;
-            
-            x = (int)(evt.getXAcceleration()/5*300)+300;
-            y = (int)(evt.getYAcceleration()/5*300)+300;
-            z = (int)(evt.getZAcceleration()/5*300)+300;
-            
-            t++;
-            
-            graph.repaint();
-        }*/
-        
-        /*System.out.println("---Acceleration Data---");
-        System.out.println("X: " + evt.getXAcceleration());
-        System.out.println("Y: " + evt.getYAcceleration());
-        System.out.println("Z: " + evt.getZAcceleration());
-        */
+        if (accelerometerSource) {
+            xAccel = (int)(evt.getXAcceleration()/5*300);
+            yAccel = (int)(evt.getYAcceleration()/5*300);
+            zAccel = (int)(evt.getZAcceleration()/5*300);
+        }
+		  pitch = evt.getPitch();
+		  roll = evt.getRoll();
+		  System.out.println("X: " + xAccel + " Y: " + yAccel + " Z: " + zAccel);
+		  //System.out.println("Pitch: " + pitch + " Roll: " + roll);
+		  if((xAverage - xAccel > 20) && calibrated) {
+		  		left();
+				xAverage = xAccel;
+		  }
+		  if((xAverage - xAccel < -20) && calibrated) {
+		  		right();
+				xAverage = xAccel;
+		  }
+		  if((yAverage - yAccel > 20) && (zAverage - zAccel > 20) && calibrated) {
+		  		down();
+				yAverage = yAccel;
+				zAverage = zAccel;
+		  }
+		  if((yAverage - yAccel > 20) && (zAverage - zAccel < -20) && calibrated) {
+		  		up();
+				yAverage = yAccel;
+				zAverage = zAccel;
+		  }
+		  
+		  /*if(calibrationFlag) {
+		  		for(int i = 0; i < 500; i++) {
+					try {
+						xAverage += (int)(evt.getXAcceleration()/5*300);
+						yAverage += (int)(evt.getYAcceleration()/5*300);
+						zAverage += (int)(evt.getZAcceleration()/5*300);
+						Thread.sleep(5);
+					}
+					catch(Exception e) {
+						e.printStackTrace();
+					}
+				}
+				xAverage /= 500;
+				yAverage /= 500;
+				zAverage /= 500;
+				System.out.println(xAverage);
+				System.out.println(yAverage);
+				System.out.println(zAverage);
+				System.out.println(xAccel);
+				System.out.println(yAccel);
+				System.out.println(zAccel);
+				calibrationFlag = false;
+		  }*/
     }
 	 
 	 public void buttonInputReceived(WRButtonEvent evt) {
-        /*if (evt.wasPressed(WRButtonEvent.TWO))System.out.println("2");
-        if (evt.wasPressed(WRButtonEvent.ONE))System.out.println("1");
-        if (evt.wasPressed(WRButtonEvent.B))System.out.println("B");*/
+        if (evt.wasPressed(WRButtonEvent.B)) {
+		  		xAverage = xAccel;
+				yAverage = yAccel;
+				zAverage = zAccel;
+				System.out.println("Calibrated X: " + xAverage);
+				System.out.println("Calibrated Y: " + yAverage);
+				System.out.println("Calibrated Z: " + zAverage);
+				calibrated = true;
+		  }
         if (evt.wasPressed(WRButtonEvent.A))
 		  		mode = !mode;
-        if (evt.wasPressed(WRButtonEvent.MINUS))
-		  		rotateRoverLeft();
+    	  /*if (evt.wasPressed(WRButtonEvent.TWO))
+        if (evt.wasPressed(WRButtonEvent.ONE))    
+		  if (evt.wasPressed(WRButtonEvent.MINUS))
         if (evt.wasPressed(WRButtonEvent.HOME))
-		  		rotateRoverRight();
         if (evt.wasPressed(WRButtonEvent.LEFT))
-		  		left();
         if (evt.wasPressed(WRButtonEvent.RIGHT))
-		  		right();
         if (evt.wasPressed(WRButtonEvent.DOWN))
-		  		down();
         if (evt.wasPressed(WRButtonEvent.UP))
-		  		up();
-        /*if (evt.wasPressed(WRButtonEvent.PLUS))System.out.println("Plus");
-        /**/
-        
-    }
+        if (evt.wasPressed(WRButtonEvent.PLUS))*/
+	 }
 
 	public void combinedInputReceived(WRCombinedEvent evt) {
 	
