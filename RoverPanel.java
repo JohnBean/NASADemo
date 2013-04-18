@@ -58,6 +58,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
         rotationSpeed=0;
         roverRotationSpeed=0;
 		  remote = null;
+		  /*
 		  try {
 	     	  WiiRemoteJ.setConsoleLoggingAll(); 
 			  while (remote == null) {
@@ -80,7 +81,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
                 java.awt.event.InputEvent.BUTTON1_MASK, 0, -1));
 		  }
 		  catch(Exception e) {e.printStackTrace();}
-
+			*/
 		  calibrated = false;
         mode = false;
         setFocusable(false);
@@ -261,17 +262,17 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
             h = fm.getAscent();
             g2d.drawString("Ackermann Steering", 100 - (w / 2), 10 + (h / 4));
 					double tempRot = wheelRotation;
-				if(!mode && moveY != 0){
+				if(!mode && (moveY*moveY) > .1){
             wheelRotation += (wheelRotation-roverRotation)/25;
                  	//the 5 is arbitrary
             roverRotation += wheelRotation-tempRot;	//constant rotation difference b/w rover & wheels
         }
             wheelRotation+=rotationSpeed;
-            if((wheelRotation-roverRotation)>30){	//prevent over-rotating wheels
-                wheelRotation=roverRotation+30;
+            if((wheelRotation-roverRotation)>15){	//prevent over-rotating wheels
+                wheelRotation=roverRotation+15;
             }
-            else if((wheelRotation-roverRotation)<-30){
-                wheelRotation=roverRotation-30;
+            else if((wheelRotation-roverRotation)<-15){
+                wheelRotation=roverRotation-15;
             }
             if(wheelRotation>360) {	//keep angles within -360 to 360 range
                      wheelRotation-=360;
@@ -282,7 +283,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
                      roverRotation+=360;
             }
 			
-	
+				
             x-=moveY*Math.sin(Math.toRadians(wheelRotation));
             y+=moveY*Math.cos(Math.toRadians(wheelRotation));
             g2d.setColor(Color.BLACK);
@@ -351,8 +352,8 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
         moveY+=.2;
         double tempRot = wheelRotation;
         if(!mode){
-            wheelRotation -= (wheelRotation-roverRotation)/6;
-            roverRotation -= wheelRotation-tempRot;
+            wheelRotation += (wheelRotation-roverRotation + rotationSpeed)/6;
+            roverRotation += wheelRotation-tempRot -rotationSpeed;
         }
         if(moveY>2.5){
             moveY=2.5;
