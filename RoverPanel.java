@@ -32,12 +32,16 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
 	 private static int xAccel = 0;
 	 private static int yAccel = 0;
 	 private static int zAccel = 0;
-	 private static int xAverage = 0;
-	 private static int yAverage = 0;
-	 private static int zAverage = 0;
+	 private static int xCal = 0;
+	 private static int yCal = 0;
+	 private static int zCal = 0;
+	 private static int xTemp = 0;
+	 private static int yTemp = 0;
+	 private static int zTemp = 0;
 	 private boolean calibrated;
 	 private static double pitch = 0;
 	 private static double roll = 0;
+	 private static int speed = 0;
 	 
    //-----------------------------------------------------------------
    //  Sets up the panel, including the timer for the animation.
@@ -54,7 +58,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
         rotationSpeed=0;
         roverRotationSpeed=0;
 		  remote = null;
-		/*  try {
+		  try {
 	     	  WiiRemoteJ.setConsoleLoggingAll(); 
 			  while (remote == null) {
 	         	try {
@@ -65,7 +69,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
 	               e.printStackTrace();
 	               System.out.println("Failed to connect remote. Trying again.");
 	            }
-					Thread.sleep(15000);
+					Thread.sleep(5000);
 	         }
 				remote.addWiiRemoteListener(this);
       		remote.setAccelerometerEnabled(true);
@@ -76,7 +80,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
                 java.awt.event.InputEvent.BUTTON1_MASK, 0, -1));
 		  }
 		  catch(Exception e) {e.printStackTrace();}
-*/
+
 		  calibrated = false;
         mode = false;
         setFocusable(false);
@@ -341,17 +345,19 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
 	if(moveY<-2.5){
             moveY=-2.5;
         }
+		  System.out.println("Up");
     }	//end up
     public void down(){
         moveY+=.2;
         double tempRot = wheelRotation;
         if(!mode){
             wheelRotation -= (wheelRotation-roverRotation)/6;
-            roverRotation += wheelRotation-tempRot;
+            roverRotation -= wheelRotation-tempRot;
         }
         if(moveY>2.5){
             moveY=2.5;
         }
+		  System.out.println("Down");
     }	//end down
     public void left(){
         rotationSpeed-=.3;
@@ -456,115 +462,165 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
             yAccel = (int)(evt.getYAcceleration()/5*300);
             zAccel = (int)(evt.getZAcceleration()/5*300);
         }
-		  pitch = evt.getPitch();
-		  roll = evt.getRoll();
-		  System.out.println("X: " + xAccel + " Y: " + yAccel + " Z: " + zAccel);
-		  //System.out.println("Pitch: " + pitch + " Roll: " + roll);
-		  if((xAverage - xAccel > 20) && calibrated) {
+
+		  if(((xTemp - xAccel) >= 30) && calibrated) {
 		  		left();
-				xAverage = xAccel;
+				xTemp = xAccel;
+				System.out.println("xTemp = " + xTemp);
 		  }
-		  if((xAverage - xAccel < -20) && calibrated) {
+		  else if((xTemp - xAccel <= -30) && calibrated) {
 		  		right();
-				xAverage = xAccel;
+				xTemp = xAccel;
+				System.out.println("xTemp = " + xTemp);
 		  }
-		  if((yAverage - yAccel > 20) && (zAverage - zAccel > 20) && calibrated) {
-		  		down();
-				yAverage = yAccel;
-				zAverage = zAccel;
+		  /*Turning Left*/
+		  /*if((xAccel >= 10) && (xAccel < 26) && calibrated && (turn == 0))
+		  		right();
+		  if((xAccel >= 28) && (xAccel < 42) && calibrated && (turn == 1))
+		  		right();
+		  if((xAccel >= 44) && (xAccel < 60) && calibrated && (turn == 2))
+		  		right();
+		  if((xAccel >= 28) && (xAccel < 42) && calibrated && (turn == 3))
+		  		left();
+		  if((xAccel >= 10) && (xAccel < 26) && calibrated && (turn == 2))
+		  		left();
+		  if((xAccel >= 0) && (xAccel < 8) && calibrated && (turn == 1))
+		  		left();*/
+		  /*Turning right*/
+		  /*if((xAccel <= -10) && (xAccel > -26) && calibrated && (turn == 0))
+		  		left();
+		  if((xAccel <= -28) && (xAccel > -42) && calibrated && (turn == -1))
+		  		left();
+		  if((xAccel <= -44) && (xAccel > -60) && calibrated && (turn == -2))
+		  		left();
+		  if((xAccel <= -10) && (xAccel > -26) && calibrated && (turn == 0))
+		  		left();
+		  if((xAccel <= -28) && (xAccel > -42) && calibrated && (turn == -1))
+		  		left();
+		  if((xAccel <= -44) && (xAccel > -60) && calibrated && (turn == -2))
+		  		left();*/
+				
+		  /*Forward movement*/
+		  if(zAccel > 10) {
+			  if((yAccel <= 42) && (yAccel > 26) && calibrated && (speed == 0)) { //&& (zTemp - zAccel > 20)
+			  		up();
+					speed++;
+					System.out.println("Speed: " + speed);
+			  }
+			  if((yAccel <= 24) && (yAccel > 12) && calibrated && (speed == 1)) { //&& (zTemp - zAccel > 20)
+			  		up();
+					speed++;
+					System.out.println("Speed: " + speed);
+			  }
+			  if((yAccel <= 10) && (yAccel > 0) && calibrated && (speed == 2)) { //&& (zTemp - zAccel > 20)
+			  		up();
+					speed++;
+					System.out.println("Speed: " + speed);
+			  }
+			  if((yAccel <= 24) && (yAccel > 12) && calibrated && (speed == 3)) { //&& (zTemp - zAccel > 20)
+			  		down();
+					speed--;
+					System.out.println("Speed: " + speed);
+			  }
+			  if((yAccel <= 42) && (yAccel > 26) && calibrated && (speed == 2)) { //&& (zTemp - zAccel > 20)
+			  		down();
+					speed--;
+					System.out.println("Speed: " + speed);
+			  }
+			  if((yAccel <= 60) && (yAccel > 44) && calibrated && (speed == 1)) { //&& (zTemp - zAccel > 20)
+			  		down();
+					speed--;
+					System.out.println("Speed: " + speed);
+			  }
 		  }
-		  if((yAverage - yAccel > 20) && (zAverage - zAccel < -20) && calibrated) {
-		  		up();
-				yAverage = yAccel;
-				zAverage = zAccel;
+		  /*Backward movement*/
+		  if(zAccel < -10) {
+			  if((yAccel <= 52) && (yAccel > 44) && calibrated && (speed == 0)) { //&& (zTemp - zAccel > 20)
+			  		down();
+					speed--;
+					System.out.println("Speed: " + speed);
+			  }
+			  if((yAccel <= 42) && (yAccel > 32) && calibrated && (speed == -1)) { //&& (zTemp - zAccel > 20)
+			  		down();
+					speed--;
+					System.out.println("Speed: " + speed);
+			  }
+			  if((yAccel <= 30) && (yAccel > 0) && calibrated && (speed == -2)) { //&& (zTemp - zAccel > 20)
+			  		down();
+					speed--;
+					System.out.println("Speed: " + speed);
+			  }
+			  if((yAccel <= 42) && (yAccel > 32) && calibrated && (speed == -3)) { //&& (zTemp - zAccel > 20)
+			  		up();
+					speed++;
+					System.out.println("Speed: " + speed);
+			  }
+			  if((yAccel <= 52) && (yAccel > 44) && calibrated && (speed == -2)) { //&& (zTemp - zAccel > 20)
+			  		up();
+					speed++;
+					System.out.println("Speed: " + speed);
+			  }
+			  if((yAccel <= 60) && (yAccel > 54) && calibrated && (speed == -1)) { //&& (zTemp - zAccel > 20)
+			  		up();
+					speed++;
+					System.out.println("Speed: " + speed);
+			  }
 		  }
-		  
-		  /*if(calibrationFlag) {
-		  		for(int i = 0; i < 500; i++) {
-					try {
-						xAverage += (int)(evt.getXAcceleration()/5*300);
-						yAverage += (int)(evt.getYAcceleration()/5*300);
-						zAverage += (int)(evt.getZAcceleration()/5*300);
-						Thread.sleep(5);
-					}
-					catch(Exception e) {
-						e.printStackTrace();
-					}
-				}
-				xAverage /= 500;
-				yAverage /= 500;
-				zAverage /= 500;
-				System.out.println(xAverage);
-				System.out.println(yAverage);
-				System.out.println(zAverage);
-				System.out.println(xAccel);
-				System.out.println(yAccel);
-				System.out.println(zAccel);
-				calibrationFlag = false;
-		  }*/
     }
 	 
 	 public void buttonInputReceived(WRButtonEvent evt) {
         if (evt.wasPressed(WRButtonEvent.B)) {
-		  		xAverage = xAccel;
-				yAverage = yAccel;
-				zAverage = zAccel;
-				System.out.println("Calibrated X: " + xAverage);
-				System.out.println("Calibrated Y: " + yAverage);
-				System.out.println("Calibrated Z: " + zAverage);
+		  		xCal = xAccel;
+				yCal = yAccel;
+				zCal = zAccel;
+				xTemp = 0;
+				yTemp = yCal;
+				zTemp = zCal;
+				System.out.println("Calibrated X: " + xCal);
+				System.out.println("Calibrated Y: " + yCal);
+				System.out.println("Calibrated Z: " + zCal);
 				calibrated = true;
+				speed = 0;
 		  }
         if (evt.wasPressed(WRButtonEvent.A))
 		  		mode = !mode;
-    	  /*if (evt.wasPressed(WRButtonEvent.TWO))
-        if (evt.wasPressed(WRButtonEvent.ONE))    
-		  if (evt.wasPressed(WRButtonEvent.MINUS))
-        if (evt.wasPressed(WRButtonEvent.HOME))
-        if (evt.wasPressed(WRButtonEvent.LEFT))
-        if (evt.wasPressed(WRButtonEvent.RIGHT))
-        if (evt.wasPressed(WRButtonEvent.DOWN))
-        if (evt.wasPressed(WRButtonEvent.UP))
-        if (evt.wasPressed(WRButtonEvent.PLUS))*/
+				   
+		  if (evt.wasPressed(WRButtonEvent.MINUS)) {
+		  	  calibrated = false;
+			  moveX = 0;
+			  moveY = 0;
+			  rotationSpeed = 0;
+			  roverRotationSpeed = 0;
+			  speed = 0;
+		  }
+		  
+        if (evt.wasPressed(WRButtonEvent.HOME)) {
+		  	  x = 200;
+	        y = 700;
+	        moveX = 0;
+	        moveY =0;
+	        roverRotation = wheelRotation = 0;
+	        rotationSpeed=0;
+	        roverRotationSpeed=0;
+			  calibrated = false;
+			  speed = 0;
+		  }
 	 }
 
-	public void combinedInputReceived(WRCombinedEvent evt) {
+	public void combinedInputReceived(WRCombinedEvent evt) {}
 	
-	}
-	
-	public void extensionConnected(WiiRemoteExtension extension)
-    {
-        System.out.println("Extension connected!");
-        try
-        {
-            remote.setExtensionEnabled(true);
-        }catch(Exception e){e.printStackTrace();}
-    }
+	public void extensionConnected(WiiRemoteExtension extension){}
     
-    public void extensionPartiallyInserted()
-    {
-        System.out.println("Extension partially inserted. Fix it!");
-    }
+   public void extensionPartiallyInserted() {}
     
-    public void extensionUnknown()
-    {
-        System.out.println("Extension unknown.");
-    }
+   public void extensionUnknown() {}
     
-    public void extensionDisconnected(WiiRemoteExtension extension)
-    {
-        System.out.println("Extension disconnected.");
-	 }
+   public void extensionDisconnected(WiiRemoteExtension extension) {}
 	
-	public void extensionInputReceived(WRExtensionEvent evt) {
+	public void extensionInputReceived(WRExtensionEvent evt) {}
 	
-	}
+	public void IRInputReceived(WRIREvent evt) {}
 	
-	public void IRInputReceived(WRIREvent evt) {
-	
-	}
-	
-	public void statusReported(WRStatusEvent evt) {
-	
-	}
+	public void statusReported(WRStatusEvent evt) {}
 	 	 
 }
