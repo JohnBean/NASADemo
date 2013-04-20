@@ -262,8 +262,13 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
             h = fm.getAscent();
             g2d.drawString("Ackermann Steering", 100 - (w / 2), 10 + (h / 4));
 					double tempRot = wheelRotation;
-				if(!mode && (moveY*moveY) > .1){
+				if(!mode && (moveY*moveY) > .1 && moveY < 0){
             wheelRotation += (wheelRotation-roverRotation)/25;
+                 	//the 5 is arbitrary
+            roverRotation += wheelRotation-tempRot;	//constant rotation difference b/w rover & wheels
+        }
+		  if(!mode && (moveY*moveY) > .1 && moveY > 0){
+            wheelRotation -= (wheelRotation-roverRotation)/25;
                  	//the 5 is arbitrary
             roverRotation += wheelRotation-tempRot;	//constant rotation difference b/w rover & wheels
         }
@@ -283,9 +288,14 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
                      roverRotation+=360;
             }
 			
-				
-            x-=moveY*Math.sin(Math.toRadians(wheelRotation));
-            y+=moveY*Math.cos(Math.toRadians(wheelRotation));
+				if(moveY>0){
+	            x-=moveY*Math.sin(Math.toRadians(roverRotation));
+					y+=moveY*Math.cos(Math.toRadians(roverRotation));
+				  }
+				  if(moveY<0){
+				 	 x-=moveY*Math.sin(Math.toRadians(wheelRotation));
+ 	          	 y+=moveY*Math.cos(Math.toRadians(wheelRotation));
+				  }
 				
            g2d.setColor(Color.GRAY);
                 Rectangle2D.Double body = new Rectangle2D.Double(-25+x,-50+y, 50, 100);
@@ -342,32 +352,35 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
     public void up(){
         moveY-=.2;
 	double tempRot = wheelRotation;
-	if(!mode){
+	if(!mode  && moveY < 0 && (wheelRotation-roverRotation)<20 && (wheelRotation-roverRotation)>-20 ){
             wheelRotation += (wheelRotation-roverRotation+rotationSpeed)/6;
                  	//the 5 is arbitrary
             roverRotation += wheelRotation-tempRot-rotationSpeed;	//constant rotation difference b/w rover & wheels
         }
 	if(moveY<-2.5){
-            moveY=-2.5;
+            moveY=-2;
         }
 		  System.out.println("Up");
     }	//end up
     public void down(){
         moveY+=.2;
         double tempRot = wheelRotation;
-        if(!mode){
+        if(!mode && moveY < 0 && (wheelRotation-roverRotation)<20 && (wheelRotation-roverRotation)>-20 ){
             wheelRotation += (wheelRotation-roverRotation + rotationSpeed)/6;
             roverRotation += wheelRotation-tempRot -rotationSpeed;
         }
-        if(moveY>2.5){
-            moveY=2.5;
+        if(moveY>2){
+            moveY=2;
         }
 		  System.out.println("Down");
     }	//end down
     public void left(){
-        rotationSpeed-=.3;
+        rotationSpeed-=.2;
+		  if(rotationSpeed < -2){
+		  		rotationSpeed = -2;
+		  }
 		  double tempRot = wheelRotation;
-	if(!mode && moveY > .1){
+	if(!mode && moveY < -.1 && (wheelRotation-roverRotation)<20 && (wheelRotation-roverRotation)>-20 ){
             wheelRotation += (wheelRotation-roverRotation+rotationSpeed)/6;
                  	//the 5 is arbitrary
             roverRotation += wheelRotation-tempRot-rotationSpeed;	//constant rotation difference b/w rover & wheels
@@ -375,9 +388,13 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
 
     }	//end left
     public void right(){
-        rotationSpeed+=.3;
+        rotationSpeed+=.2;
+		  if(rotationSpeed > 2){
+		  		rotationSpeed = 2;
+		  }
+		  
 		  double tempRot = wheelRotation;
-	if(!mode && moveY > .1){
+	if(!mode && moveY < -.1 && (wheelRotation-roverRotation)<20 && (wheelRotation-roverRotation)>-20 ){
             wheelRotation += (wheelRotation-roverRotation+rotationSpeed)/6;
                  	//the 5 is arbitrary
             roverRotation += wheelRotation-tempRot-rotationSpeed;	//constant rotation difference b/w rover & wheels
