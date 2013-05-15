@@ -13,9 +13,9 @@ import wiiremotej.event.*;
 
 public class RoverPanel extends JPanel implements ActionListener, KeyListener, WiiRemoteListener 
 {
+	 /*Declaring all class variables*/
 	 
     private static Font sanSerifFont = new Font("SanSerif", Font.PLAIN, 12);
-
     private int width = 800, height = 800;
     public int delay=5;
     private final int IMAGE_SIZE = 35;
@@ -58,7 +58,8 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
         rotationSpeed=0;
         roverRotationSpeed=0;
 		  remote = null;
-		  /*
+		  
+		  /*Connecting to WiiMote and initializing WiiMote variables*/
 		  try {
 	     	  WiiRemoteJ.setConsoleLoggingAll(); 
 			  while (remote == null) {
@@ -81,7 +82,6 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
                 java.awt.event.InputEvent.BUTTON1_MASK, 0, -1));
 		  }
 		  catch(Exception e) {e.printStackTrace();}
-			*/
 		  calibrated = false;
         mode = false;
         setFocusable(false);
@@ -105,7 +105,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
         Graphics2D g2d = (Graphics2D) page;
         g2d.setFont(sanSerifFont);
         FontMetrics fm = g2d.getFontMetrics();
-        //Add in obstacles
+        /*Adds in obstacles*/
         g2d.setColor(Color.orange);
         Ellipse2D.Double obs1 = new Ellipse2D.Double(50, 600, 60, 60);
         g2d.fill(obs1);
@@ -138,7 +138,9 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
         g2d.fill(obs10);
 
         g2d.setColor(Color.black);
-	if(rotationSpeed>2.5){
+		  
+		  /*Prevents wheels from rotating too quickly*/
+		  if(rotationSpeed>2.5){
             rotationSpeed=2.5;
         }	  
         if(rotationSpeed<-2.5){
@@ -147,12 +149,16 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
         int w = fm.stringWidth("Enter: Change modes   Up/Down: Move    Left/Right: Steer");
         int h = fm.getAscent();
         g2d.drawString("Enter: Change modes   Up/Down: Move    Left/Right: Steer", 400 - (w / 2), 10 + (h / 4));
-	if(mode) {//Crab
+		  
+		  /*Crab steering mode*/
+		  if(mode) {
             w = fm.stringWidth("Crab Steering");
             h = fm.getAscent();
             g2d.drawString("Crab Steering", 100 - (w / 2), 10 + (h / 4));
             wheelRotation+=rotationSpeed;
-            if(roverRotationSpeed==0){
+            
+				/*Calculating rotation and drawing the rover*/
+				if(roverRotationSpeed==0){
                 x-=moveY*Math.sin(Math.toRadians(roverRotation+wheelRotation));
                 y+=moveY*Math.cos(Math.toRadians(roverRotation+wheelRotation));
                 
@@ -162,9 +168,6 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
                 g2d.rotate(Math.toRadians(roverRotation));
                 g2d.translate(-x, -y);
                 g2d.fill(body);
-                /*g2d.setColor(Color.GRAY);
-                Rectangle2D.Double body = new Rectangle2D.Double(-25+x,-50+y, 50, 100);
-                g2d.fill(body);*/
 
                 g2d.setColor(Color.BLACK);
                 Rectangle2D.Double frontLeftWheel = new Rectangle2D.Double(-35+x,-40+y, 10, 25);
@@ -257,25 +260,25 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
                 g2d.translate(35-5-x, -20-12.5-y);
             }
         }	//end if (Crab) 
-	else {//Ackermann
+		  
+		  /*Ackermann Steering Mode*/
+		  else {
             w = fm.stringWidth("Ackermann Steering");
             h = fm.getAscent();
             g2d.drawString("Ackermann Steering", 100 - (w / 2), 10 + (h / 4));
-					double tempRot = wheelRotation;
+				double tempRot = wheelRotation;
 				if(!mode && (moveY*moveY) > .1 && moveY < 0){
-            wheelRotation += (wheelRotation-roverRotation)/25;
-                 	//the 5 is arbitrary
-            roverRotation += wheelRotation-tempRot;	//constant rotation difference b/w rover & wheels
-        }
-		  if(!mode && (moveY*moveY) > .1 && moveY > 0){
-            wheelRotation -= (wheelRotation-roverRotation)/25;
-                 	//the 5 is arbitrary
-            roverRotation += wheelRotation-tempRot;	//constant rotation difference b/w rover & wheels
-        }
-            wheelRotation+=rotationSpeed;
-            if((wheelRotation-roverRotation)>20){	//prevent over-rotating wheels
-                wheelRotation=roverRotation+20;
-            }
+            	wheelRotation += (wheelRotation-roverRotation)/25;
+            	roverRotation += wheelRotation-tempRot;	//constant rotation difference b/w rover & wheels
+        	   }
+		  		if(!mode && (moveY*moveY) > .1 && moveY > 0){
+            	wheelRotation -= (wheelRotation-roverRotation)/25;
+            	roverRotation += wheelRotation-tempRot;	//constant rotation difference b/w rover & wheels
+        		}
+        		wheelRotation+=rotationSpeed;
+        		if((wheelRotation-roverRotation)>20){	//prevent over-rotating wheels
+            	wheelRotation=roverRotation+20;
+        		}
             else if((wheelRotation-roverRotation)<-20){
                 wheelRotation=roverRotation-20;
             }
@@ -291,77 +294,83 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
 				if(moveY>0){
 	            x-=moveY*Math.sin(Math.toRadians(roverRotation));
 					y+=moveY*Math.cos(Math.toRadians(roverRotation));
-				  }
-				  if(moveY<0){
-				 	 x-=moveY*Math.sin(Math.toRadians(wheelRotation));
- 	          	 y+=moveY*Math.cos(Math.toRadians(wheelRotation));
-				  }
+				}
+				if(moveY<0){
+				 	x-=moveY*Math.sin(Math.toRadians(wheelRotation));
+ 	          	y+=moveY*Math.cos(Math.toRadians(wheelRotation));
+				}
 				
-           g2d.setColor(Color.GRAY);
-                Rectangle2D.Double body = new Rectangle2D.Double(-25+x,-50+y, 50, 100);
-                g2d.translate(x, y);
-                g2d.rotate(Math.toRadians(roverRotation));
-                g2d.translate(-x, -y);
-                g2d.fill(body);
-					 g2d.setColor(Color.BLACK);
-                Rectangle2D.Double backRightWheel = new Rectangle2D.Double(25+x, 20+y, 10, 25);
-                g2d.translate(25+5+x, 20+12.5+y);	//translate coordinates to center of wheel for rotation
-                g2d.translate(-25-5-x, -20-12.5-y);
-                g2d.fill(backRightWheel);
-                g2d.translate(25+5+x, 20+12.5+y);	//translate coordinates back to origin
-                g2d.translate(-25-5-x, -20-12.5-y);
+				/*Calculating rotation and drawing rover*/
+           	g2d.setColor(Color.GRAY);
+            Rectangle2D.Double body = new Rectangle2D.Double(-25+x,-50+y, 50, 100);
+            g2d.translate(x, y);
+            g2d.rotate(Math.toRadians(roverRotation));
+            g2d.translate(-x, -y);
+            g2d.fill(body);
+				g2d.setColor(Color.BLACK);
+            Rectangle2D.Double backRightWheel = new Rectangle2D.Double(25+x, 20+y, 10, 25);
+            g2d.translate(25+5+x, 20+12.5+y);	//translate coordinates to center of wheel for rotation
+            g2d.translate(-25-5-x, -20-12.5-y);
+            g2d.fill(backRightWheel);
+            g2d.translate(25+5+x, 20+12.5+y);	//translate coordinates back to origin
+            g2d.translate(-25-5-x, -20-12.5-y);
 
-                g2d.setColor(Color.BLACK);
-                Rectangle2D.Double backLeftWheel = new Rectangle2D.Double(-35+x, 20+y, 10, 25);
-                g2d.translate(-35+5+x, 20+12.5+y);	//translate coordinates to center of wheel for rotation
-                g2d.translate(35-5-x, -20-12.5-y);
-                g2d.fill(backLeftWheel);
-                g2d.translate(-35+5+x, 20+12.5+y);	//translate coordinates back to origin
-                g2d.translate(35-5-x, -20-12.5-y);
+            g2d.setColor(Color.BLACK);
+            Rectangle2D.Double backLeftWheel = new Rectangle2D.Double(-35+x, 20+y, 10, 25);
+            g2d.translate(-35+5+x, 20+12.5+y);	//translate coordinates to center of wheel for rotation
+            g2d.translate(35-5-x, -20-12.5-y);
+            g2d.fill(backLeftWheel);
+            g2d.translate(-35+5+x, 20+12.5+y);	//translate coordinates back to origin
+            g2d.translate(35-5-x, -20-12.5-y);
 					 
-					g2d.setColor(Color.BLACK);
-                Rectangle2D.Double frontLeftWheel = new Rectangle2D.Double(-35+x,-40+y, 10, 25);
-                g2d.translate(-35+5+x, -40+12.5+y);	//translate coordinates to center of wheel for rotation
-                g2d.rotate(Math.toRadians(wheelRotation));
-					 g2d.rotate(Math.toRadians(-roverRotation));
-                g2d.translate(35-5-x, 40-12.5-y);
-                g2d.fill(frontLeftWheel);
-                g2d.translate(-35+5+x, -40+12.5+y);	//translate coordinates back to origin
-                g2d.rotate(Math.toRadians(-wheelRotation));
-					 g2d.rotate(Math.toRadians(roverRotation));
-                g2d.translate(35-5-x, 40-12.5-y);
-					  g2d.setColor(Color.BLACK);
-                Rectangle2D.Double frontRightWheel = new Rectangle2D.Double(25+x,-40+y, 10, 25);
-                g2d.translate(25+5+x, -40+12.5+y);	//translate coordinates to center of wheel for rotation
-                g2d.rotate(Math.toRadians(wheelRotation - roverRotation));
-                g2d.translate(-25-5-x, 40-12.5-y);
-                g2d.fill(frontRightWheel);
-                g2d.translate(25+5+x, -40+12.5+y);	//translate coordinates back to origin
-                g2d.rotate(Math.toRadians(-wheelRotation));
-                g2d.translate(-25-5-x, 40-12.5-y);
+				g2d.setColor(Color.BLACK);
+            Rectangle2D.Double frontLeftWheel = new Rectangle2D.Double(-35+x,-40+y, 10, 25);
+            g2d.translate(-35+5+x, -40+12.5+y);	//translate coordinates to center of wheel for rotation
+            g2d.rotate(Math.toRadians(wheelRotation));
+		  	 	g2d.rotate(Math.toRadians(-roverRotation));
+            g2d.translate(35-5-x, 40-12.5-y);
+            g2d.fill(frontLeftWheel);
+            g2d.translate(-35+5+x, -40+12.5+y);	//translate coordinates back to origin
+            g2d.rotate(Math.toRadians(-wheelRotation));
+				g2d.rotate(Math.toRadians(roverRotation));
+            g2d.translate(35-5-x, 40-12.5-y);
+				g2d.setColor(Color.BLACK);
+            Rectangle2D.Double frontRightWheel = new Rectangle2D.Double(25+x,-40+y, 10, 25);
+            g2d.translate(25+5+x, -40+12.5+y);	//translate coordinates to center of wheel for rotation
+            g2d.rotate(Math.toRadians(wheelRotation - roverRotation));
+            g2d.translate(-25-5-x, 40-12.5-y);
+            g2d.fill(frontRightWheel);
+            g2d.translate(25+5+x, -40+12.5+y);	//translate coordinates back to origin
+            g2d.rotate(Math.toRadians(-wheelRotation));
+            g2d.translate(-25-5-x, 40-12.5-y);
 					         }	//end else (Ackermann)
     }	//end paintComponent
 
-	/** this method changes delay of the repaint method thought timer.
-	* @param delta determines what the change in the timer will be on click
+	/** This method changes delay of the repaint method thought timer.
+	* @param e determines what the change in the timer will be on click
 	*/
     @Override
     public void actionPerformed(ActionEvent e) {
         repaint();
     }	//end actionPerformed
+	 
+	 /** This method moves the rover up
+	 */
     public void up(){
         moveY-=.2;
-	double tempRot = wheelRotation;
-	if(!mode  && moveY < 0 && (wheelRotation-roverRotation)<20 && (wheelRotation-roverRotation)>-20 ){
-            wheelRotation += (wheelRotation-roverRotation+rotationSpeed)/6;
-                 	//the 5 is arbitrary
+	 	  double tempRot = wheelRotation;
+	 	  if(!mode  && moveY < 0 && (wheelRotation-roverRotation)<20 && (wheelRotation-roverRotation)>-20 ){
+         	wheelRotation += (wheelRotation-roverRotation+rotationSpeed)/6;
             roverRotation += wheelRotation-tempRot-rotationSpeed;	//constant rotation difference b/w rover & wheels
         }
-	if(moveY<-2.5){
+		  if(moveY<-2.5){
             moveY=-2;
         }
 		  System.out.println("Up");
     }	//end up
+	 
+	 /** This method moves the rover down
+	 */
     public void down(){
         moveY+=.2;
         double tempRot = wheelRotation;
@@ -374,45 +383,55 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
         }
 		  System.out.println("Down");
     }	//end down
+	 
+	 /** This method moves the rover left
+	 */
     public void left(){
         rotationSpeed-=.2;
 		  if(rotationSpeed < -2){
 		  		rotationSpeed = -2;
 		  }
 		  double tempRot = wheelRotation;
-	if(!mode && moveY < -.1 && (wheelRotation-roverRotation)<20 && (wheelRotation-roverRotation)>-20 ){
+		  if(!mode && moveY < -.1 && (wheelRotation-roverRotation)<20 && (wheelRotation-roverRotation)>-20 ){
             wheelRotation += (wheelRotation-roverRotation+rotationSpeed)/6;
-                 	//the 5 is arbitrary
             roverRotation += wheelRotation-tempRot-rotationSpeed;	//constant rotation difference b/w rover & wheels
         }
-
     }	//end left
+	 
+	 /** This method moves the rover right
+	 */
     public void right(){
         rotationSpeed+=.2;
 		  if(rotationSpeed > 2){
 		  		rotationSpeed = 2;
 		  }
-		  
 		  double tempRot = wheelRotation;
-	if(!mode && moveY < -.1 && (wheelRotation-roverRotation)<20 && (wheelRotation-roverRotation)>-20 ){
+		  if(!mode && moveY < -.1 && (wheelRotation-roverRotation)<20 && (wheelRotation-roverRotation)>-20 ){
             wheelRotation += (wheelRotation-roverRotation+rotationSpeed)/6;
-                 	//the 5 is arbitrary
             roverRotation += wheelRotation-tempRot-rotationSpeed;	//constant rotation difference b/w rover & wheels
         }
-
     }	//end right
+	 
+	 /** This method rotates the rover left in crab steering mode
+	 */
     public void rotateRoverLeft(){
         roverRotationSpeed +=.2;
         if(roverRotationSpeed>2){
             roverRotationSpeed=2;
         }
     }
+	 
+	 /** This method rotates the rover right in crab steering mode
+	 */
     public void rotateRoverRight(){
         roverRotationSpeed -=.2;
         if(roverRotationSpeed<-2){
             roverRotationSpeed= -2;
         }
     }
+	 
+	 /**Enables the rover to be controlled by key inputs
+	 */
     @Override
     public void keyPressed(KeyEvent e){
         int code = e.getKeyCode();
@@ -443,10 +462,10 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
             }
         }
    }	//end keyPressed
-    @Override
-    public void keyTyped(KeyEvent e){}
-    @Override
-    public void keyReleased(KeyEvent e){
+   @Override
+   public void keyTyped(KeyEvent e){}
+   @Override
+   public void keyReleased(KeyEvent e){
         int code = e.getKeyCode();
         if(code ==KeyEvent.VK_A){
             roverRotationSpeed=0;
@@ -464,20 +483,24 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
         }	//end if
         if(code==KeyEvent.VK_LEFT){
             rotationSpeed=0;
-            //moveX=0;
         }	//end if
         if(code==KeyEvent.VK_RIGHT){
-            rotationSpeed=0;            //moveX=0;
+            rotationSpeed=0;
         }	//end if
     }	//end keyReleased	
 
-/*Wiimote functions*/
+	/*Wiimote functions*/
 
+	/** Outputs a message and exits the program when WiiMote is disconnected
+	 */
     public void disconnected() {
         System.out.println("Remote disconnected... Please Wii again.");
         System.exit(0);
     }
 	 
+	 /** Receives acceleration input from WiiMote and translates it to rover movement
+	 * @param evt A WiiMote acceleration event
+	 */
 	 public void accelerationInputReceived(WRAccelerationEvent evt) {
         if (accelerometerSource) {
             xAccel = (int)(evt.getXAcceleration()/5*300);
@@ -485,6 +508,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
             zAccel = (int)(evt.getZAcceleration()/5*300);
         }
 
+		  /*Moving left and right*/
 		  if(((xTemp - xAccel) >= 30) && calibrated) {
 		  		left();
 				xTemp = xAccel;
@@ -495,94 +519,69 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
 				xTemp = xAccel;
 				System.out.println("xTemp = " + xTemp);
 		  }
-		  /*Turning Left*/
-		  /*if((xAccel >= 10) && (xAccel < 26) && calibrated && (turn == 0))
-		  		right();
-		  if((xAccel >= 28) && (xAccel < 42) && calibrated && (turn == 1))
-		  		right();
-		  if((xAccel >= 44) && (xAccel < 60) && calibrated && (turn == 2))
-		  		right();
-		  if((xAccel >= 28) && (xAccel < 42) && calibrated && (turn == 3))
-		  		left();
-		  if((xAccel >= 10) && (xAccel < 26) && calibrated && (turn == 2))
-		  		left();
-		  if((xAccel >= 0) && (xAccel < 8) && calibrated && (turn == 1))
-		  		left();*/
-		  /*Turning right*/
-		  /*if((xAccel <= -10) && (xAccel > -26) && calibrated && (turn == 0))
-		  		left();
-		  if((xAccel <= -28) && (xAccel > -42) && calibrated && (turn == -1))
-		  		left();
-		  if((xAccel <= -44) && (xAccel > -60) && calibrated && (turn == -2))
-		  		left();
-		  if((xAccel <= -10) && (xAccel > -26) && calibrated && (turn == 0))
-		  		left();
-		  if((xAccel <= -28) && (xAccel > -42) && calibrated && (turn == -1))
-		  		left();
-		  if((xAccel <= -44) && (xAccel > -60) && calibrated && (turn == -2))
-		  		left();*/
 				
 		  /*Forward movement*/
 		  if(zAccel > 10) {
-			  if((yAccel <= 42) && (yAccel > 26) && calibrated && (speed == 0)) { //&& (zTemp - zAccel > 20)
+			  if((yAccel <= 42) && (yAccel > 26) && calibrated && (speed == 0)) {
 			  		up();
 					speed++;
 					System.out.println("Speed: " + speed);
 			  }
-			  if((yAccel <= 24) && (yAccel > 12) && calibrated && (speed == 1)) { //&& (zTemp - zAccel > 20)
+			  if((yAccel <= 24) && (yAccel > 12) && calibrated && (speed == 1)) {
 			  		up();
 					speed++;
 					System.out.println("Speed: " + speed);
 			  }
-			  if((yAccel <= 10) && (yAccel > 0) && calibrated && (speed == 2)) { //&& (zTemp - zAccel > 20)
+			  if((yAccel <= 10) && (yAccel > 0) && calibrated && (speed == 2)) {
 			  		up();
 					speed++;
 					System.out.println("Speed: " + speed);
 			  }
-			  if((yAccel <= 24) && (yAccel > 12) && calibrated && (speed == 3)) { //&& (zTemp - zAccel > 20)
+			  if((yAccel <= 24) && (yAccel > 12) && calibrated && (speed == 3)) {
 			  		down();
 					speed--;
 					System.out.println("Speed: " + speed);
 			  }
-			  if((yAccel <= 42) && (yAccel > 26) && calibrated && (speed == 2)) { //&& (zTemp - zAccel > 20)
+			  if((yAccel <= 42) && (yAccel > 26) && calibrated && (speed == 2)) {
 			  		down();
 					speed--;
 					System.out.println("Speed: " + speed);
 			  }
-			  if((yAccel <= 60) && (yAccel > 44) && calibrated && (speed == 1)) { //&& (zTemp - zAccel > 20)
+			  if((yAccel <= 60) && (yAccel > 44) && calibrated && (speed == 1)) {
 			  		down();
 					speed--;
 					System.out.println("Speed: " + speed);
 			  }
 		  }
+		  
 		  /*Backward movement*/
 		  if(zAccel < -10) {
-			  if((yAccel <= 52) && (yAccel > 44) && calibrated && (speed == 0)) { //&& (zTemp - zAccel > 20)
+			  if((yAccel <= 52) && (yAccel > 44) && calibrated && (speed == 0)) {
 			  		down();
 					speed--;
 					System.out.println("Speed: " + speed);
 			  }
-			  if((yAccel <= 42) && (yAccel > 32) && calibrated && (speed == -1)) { //&& (zTemp - zAccel > 20)
+			  if((yAccel <= 42) && (yAccel > 32) && calibrated && (speed == -1)) {
 			  		down();
 					speed--;
 					System.out.println("Speed: " + speed);
 			  }
-			  if((yAccel <= 30) && (yAccel > 0) && calibrated && (speed == -2)) { //&& (zTemp - zAccel > 20)
+			  if((yAccel <= 30) && (yAccel > 0) && calibrated && (speed == -2)) {
 			  		down();
 					speed--;
 					System.out.println("Speed: " + speed);
 			  }
-			  if((yAccel <= 42) && (yAccel > 32) && calibrated && (speed == -3)) { //&& (zTemp - zAccel > 20)
+			  if((yAccel <= 42) && (yAccel > 32) && calibrated && (speed == -3)) {
 			  		up();
 					speed++;
 					System.out.println("Speed: " + speed);
 			  }
-			  if((yAccel <= 52) && (yAccel > 44) && calibrated && (speed == -2)) { //&& (zTemp - zAccel > 20)
+			  if((yAccel <= 52) && (yAccel > 44) && calibrated && (speed == -2)) {
 			  		up();
 					speed++;
 					System.out.println("Speed: " + speed);
 			  }
-			  if((yAccel <= 60) && (yAccel > 54) && calibrated && (speed == -1)) { //&& (zTemp - zAccel > 20)
+			  if((yAccel <= 60) && (yAccel > 54) && calibrated && (speed == -1)) {
 			  		up();
 					speed++;
 					System.out.println("Speed: " + speed);
@@ -590,8 +589,13 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
 		  }
     }
 	 
+	 /** Handles the button inputs to the WiiMote
+	 * @param evt A WiiRemote button event
+	 */
 	 public void buttonInputReceived(WRButtonEvent evt) {
-        if (evt.wasPressed(WRButtonEvent.B)) {
+        
+		  /*Calibrates the remote*/
+		  if (evt.wasPressed(WRButtonEvent.B)) {
 		  		xCal = xAccel;
 				yCal = yAccel;
 				zCal = zAccel;
@@ -604,9 +608,12 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
 				calibrated = true;
 				speed = 0;
 		  }
+		  
+		  /*Changes the steering mode*/
         if (evt.wasPressed(WRButtonEvent.A))
 		  		mode = !mode;
 				   
+		  /*Freezes the rover*/
 		  if (evt.wasPressed(WRButtonEvent.MINUS)) {
 		  	  calibrated = false;
 			  moveX = 0;
@@ -616,6 +623,7 @@ public class RoverPanel extends JPanel implements ActionListener, KeyListener, W
 			  speed = 0;
 		  }
 		  
+		  /*Resets the rover demo*/
         if (evt.wasPressed(WRButtonEvent.HOME)) {
 		  	  x = 200;
 	        y = 700;
